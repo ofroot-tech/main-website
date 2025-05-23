@@ -1,5 +1,7 @@
 "use client";
 
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="page">
@@ -32,6 +34,10 @@ export default function Home() {
             <li><span>📅</span> Smart forms, lead tracking, booking – built-in and ready to go.</li>
             <li><span>🚀</span> Growth-focused launch tools – because speed and momentum matter.</li>
           </ul>
+            {/* Add the link to the Just Start page */}
+            <Link href="/justStart">
+            Learn More About <span className="cta-button">Just Start</span>
+            </Link>
         </section>
 
         <section className="section">
@@ -54,6 +60,7 @@ export default function Home() {
               <li><a href="#features">Features</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li>
+              <li><a href="#privacy">Just Start</a></li>
             </ul>
           </div>
           <div className="footer-social">
@@ -261,6 +268,35 @@ export default function Home() {
           .footer-social a {
             font-size: 1rem;
           }
+        }
+
+        .cta-button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 10px 20px;
+          background: radial-gradient(circle,rgb(255, 253, 253),rgb(236, 251, 237),rgb(244, 255, 244));
+          color: black;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+          position: relative;
+        }
+
+        .cta-button::after {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 2px;
+          background: #ffffff;
+          border-bottom: 2px dottedrgb(52, 50, 50);
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+        }
+
+        .cta-button:hover {
+          background: radial-gradient(circle,rgb(45, 31, 31),rgb(4, 97, 10),rgb(76, 101, 76));
+          color: white;
         }
       `}</style>
     </div>
