@@ -37,9 +37,9 @@ export default function Home() {
         <section className="section">
           <h2>Why OfRoot?</h2>
           <p>
-            We’ve been in your shoes—building from the ground up, solving real-world problems with limited resources and big dreams. That’s why our tools are built for performance, efficiency, and scale.
+            We’ve been in your shoes—building from the ground up, solving real-world problems with limited resources and big dreams. That’s why our tools are built for performance, efficiency, and scale. <br></br><br></br>
           </p>
-          <p>We don’t just sell software. We deliver results.
+          <p>We don’t just sell software. We deliver results. <br></br><br></br>
           Let’s build something real. Let’s Just Start.</p>
         </section>
       </main>
