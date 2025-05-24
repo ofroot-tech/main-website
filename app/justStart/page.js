@@ -92,10 +92,108 @@ export default function JustStart() {
               Join thousands of businesses already using Just Start to grow and
               succeed. Let’s build something real. Let’s Just Start.
             </p>
-            <a href="/contact" className="cta-button">
+            {/* <a href="/contact" className="cta-button">
               Contact Us
-            </a>
+            </a> */}
           </section>
+
+          <section className="section">
+  <h2>Subscription Plans</h2>
+  <div className="plans">
+    <div className="plan">
+      <h3>Basic</h3>
+      <p className="price">$10/month</p>
+      <ul>
+        <li>✔ Automated Branding Tools</li>
+        <li>✔ Customer Management</li>
+        <li>✖ AI-Powered Blog Creation</li>
+        <li>✖ Smart Forms & Booking</li>
+      </ul>
+      <button className="cta-button">Choose Basic</button>
+    </div>
+    <div className="plan">
+      <h3>Pro</h3>
+      <p className="price">$25/month</p>
+      <ul>
+        <li>✔ Automated Branding Tools</li>
+        <li>✔ Customer Management</li>
+        <li>✔ AI-Powered Blog Creation</li>
+        <li>✔ Smart Forms & Booking</li>
+      </ul>
+      <button className="cta-button">Choose Pro</button>
+    </div>
+    <div className="plan">
+      <h3>Enterprise</h3>
+      <p className="price">Custom Pricing</p>
+      <ul>
+        <li>✔ All Pro Features</li>
+        <li>✔ Dedicated Support</li>
+        <li>✔ Custom Integrations</li>
+        <li>✔ Advanced Analytics</li>
+      </ul>
+      <button className="cta-button">Contact Us</button>
+    </div>
+  </div>
+</section>
+
+<section className="section">
+  <h2>Comprehensive Features</h2>
+  <div className="features-grid">
+    <div className="feature-category">
+      <h3>Marketing</h3>
+      <ul>
+        <li>✔ Create Your Brand</li>
+        <li>✔ QR Code Generation</li>
+        <li>✔ SEO Growth</li>
+      </ul>
+    </div>
+    <div className="feature-category">
+      <h3>Core Operational Features</h3>
+      <ul>
+        <li>✔ Scheduling & Dispatch</li>
+        <li>✔ Customer Relationship Management (CRM)</li>
+        <li>✔ Insights & Reports</li>
+        <li>✔ Estimate to Quote</li>
+        <li>✔ SMS Alerts</li>
+      </ul>
+    </div>
+    <div className="feature-category">
+      <h3>Business Intelligence & Reporting</h3>
+      <ul>
+        <li>✔ Analytics Dashboard</li>
+        <li>✔ Custom Reporting Tools</li>
+      </ul>
+    </div>
+    <div className="feature-category">
+      <h3>Administrative & Support Tools</h3>
+      <ul>
+        <li>✔ Document Management</li>
+        <li>✔ Inventory Management</li>
+        <li>✔ Project Management</li>
+        <li>✔ Ticketing System</li>
+      </ul>
+    </div>
+    <div className="feature-category">
+      <h3>Integrations & Automations</h3>
+      <ul>
+        <li>✔ Third-Party Integrations</li>
+        <li>✔ Workflow Automation</li>
+      </ul>
+    </div>
+    <div className="feature-category">
+      <h3>Tasks</h3>
+      <ul>
+        <li>✔ Build Analytics Dashboard</li>
+        <li>✔ Create Reporting Tools</li>
+        <li>✔ Build QR Code Generator</li>
+        <li>✔ Implement Third-Party Integrations</li>
+        <li>✔ Develop Workflow Automations</li>
+        <li>✔ File Business Paperwork (LLC)</li>
+        <li>✔ Get Business Cards</li>
+      </ul>
+    </div>
+  </div>
+</section>
       </main>
 
        
@@ -377,6 +475,103 @@ export default function JustStart() {
           color: #0070f3;
         }
 
+        .plans {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+          }
+
+          .plan {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          .plan h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+          }
+
+          .price {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #0070f3;
+          }
+
+          .plan ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px;
+            text-align: left;
+          }
+
+          .plan ul li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #555;
+          }
+            
+        .cta-button {
+            display: inline-block;
+            width: 100%;
+            padding: 10px 20px;
+            background: #0070f3;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+          }
+
+          .cta-button:hover {
+            background: #005bb5;
+          }
+
+          .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+          }
+
+          .feature-category {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 300px;
+            text-align: left;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          .feature-category h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #333;
+          }
+
+          .feature-category ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+
+          .feature-category ul li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #555;
+          }
       `}</style>
     </div>
   );

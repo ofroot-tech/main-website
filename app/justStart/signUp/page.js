@@ -9,22 +9,51 @@ export default function Home() {
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
-  
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
   });
 
+  const [loading, setLoading] = useState(false); // Loading state
+  const [error, setError] = useState(""); // Error state
+  const [success, setSuccess] = useState(""); // Success state
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Submitted:", formData);
-    // Add your form submission logic here
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const response = await fetch("https://juststart-backend-production.up.railway.app/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSuccess("Account created successfully!");
+        setFormData({ name: "", email: "", password: "" }); // Reset form
+        console.log("User Data:", data.user); // Log user data for debugging
+      } else {
+        const errorData = await response.json();
+        setError(errorData.message || "Failed to create account.");
+      }
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -72,6 +101,8 @@ export default function Home() {
         <section className="section">
           <h2>Create Your Account</h2>
           <form className="signup-form" onSubmit={handleSubmit}>
+            {error && <p className="error-message">{error}</p>}
+            {success && <p className="success-message">{success}</p>}
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <input
@@ -105,14 +136,13 @@ export default function Home() {
                 required
               />
             </div>
-            <button type="submit" className="cta-button">
-              Sign Up
+            <button type="submit" className="cta-button" disabled={loading}>
+              {loading ? "Creating Account..." : "Sign Up"}
             </button>
           </form>
         </section>
       </main>
 
-       
        <footer className="footer">
         <div className="footer-container">
           <div className="footer-links">
