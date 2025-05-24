@@ -3,15 +3,32 @@
 import { useState } from 'react';
 import Link from 'next/link';
 
-export default function JustStart() {
+export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
+  
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Submitted:", formData);
+    // Add your form submission logic here
+  };
 
   return (
-    <div className="page">
+     <div className="page">
       {/* Navbar */}
       <header className="header">
         <div className="logo">OFROOT x JUST START</div>
@@ -19,22 +36,20 @@ export default function JustStart() {
           ☰
         </button>
         <nav className={`menu ${menuOpen ? "open" : ""}`}>
-          <ul>
+          <ul>     
             <li>
-              <Link href="/justStart/signUp">Sign Up</Link> <br></br>
+                <Link href="/justStart">JUST START</Link>
+              </li>     
+                <hr></hr>
+            <li>
+              <a href="https://www.ofroot.health">OFROOT HEALTH</a>
             </li>
               <hr></hr>
-    <li>
-              <Link href="/justStart/signIn">Sign In</Link> <br></br>
-    </li>
-              <hr></hr>
-<li>
-              <Link href="/">OFROOT</Link>
-</li>
-              <hr></hr>
-              {/* <li>
-                <a href="https://www.ofroot.health">OFROOT HEALTH</a>
-              </li> */}
+          
+                <li>
+                <Link href="/justStart/signUp">Sign Up</Link>
+              </li>     
+                <hr></hr>
             {/* <li>
               <Link href="/features">Features</Link>
             </li>
@@ -49,66 +64,55 @@ export default function JustStart() {
       </header>
 
       <section className="jumbotron">
-        <h1 className="jumbotronTitle">JUST START</h1>
-        <p className="jumbotronSubtitle">
-            Empowering Home Service Businesses with Cutting-Edge Tools
-        </p>
+        <h1 className="jumbotronTitle">Sign In</h1>
+        <p className="jumbotronSubtitle">Welcome back to Just Start!</p>
       </section>
 
       <main className="main">
         <section className="section">
-            <h2>Why Choose Just Start?</h2>
-            <p>
-                Just Start is your all-in-one platform designed specifically for home
-                service businesses—contractors, cleaners, landscapers, handymen, and
-                beyond. It’s more than just software. It’s your competitive edge.
-            </p>
+          <h2>Sign in to your Account</h2>
+          <form className="signup-form" onSubmit={handleSubmit}>            
+            <div className="form-group">
+              <label htmlFor="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="password">Password</label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <button type="submit" className="cta-button">
+              Sign Up
+            </button>
+          </form>
         </section>
-
-        <section className="section">
-          <h2>Features</h2>
-            <ul>
-              <li>
-                <span>🔧</span> Automated branding tools – instantly create high-quality banners, QR codes, and marketing assets.
-              </li>
-              <li>
-                <span>👥</span> Customer management – clean, intuitive, and built to scale.
-              </li>
-              <li>
-                <span>📝</span> AI-powered blog creation – optimized content that helps you rank and reach more customers.
-              </li>
-              <li>
-                <span>📅</span> Smart forms, lead tracking, booking – built-in and ready to go.
-              </li>
-              <li>
-                <span>🚀</span> Growth-focused launch tools – because speed and momentum matter.
-              </li>
-            </ul>
-        </section>
-
-        <section className="section">
-          <h2>Get Started Today</h2>
-            <p>
-              Join thousands of businesses already using Just Start to grow and
-              succeed. Let’s build something real. Let’s Just Start.
-            </p>
-            <a href="/contact" className="cta-button">
-              Contact Us
-            </a>
-          </section>
       </main>
 
        
        <footer className="footer">
         <div className="footer-container">
           <div className="footer-links">
-            <a href="/" className="footer-logo">OFROOT x JUST START</a>
+            <a href="/" className="footer-logo">OFROOT</a>
             <ul className="footer-menu">
               {/* <li><a href="#home">Home</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#about">About</a></li>
               <li><a href="#contact">Contact</a></li> */}
-              <Link href="/">OFROOT</Link>
+              <Link href="/justStart">Just Start</Link>
+              {/* <li><a href="#privacy">Just Start</a></li> */}
             </ul>
           </div>
           <div className="footer-social">
@@ -126,6 +130,7 @@ export default function JustStart() {
       <style jsx>{`
 
       @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+
 
       .page {
           background: #ffffff;
@@ -317,7 +322,36 @@ export default function JustStart() {
           }
         }
 
-        // sidebar menu
+        .cta-button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 10px 20px;
+          background: radial-gradient(circle,rgb(255, 253, 253),rgb(236, 251, 237),rgb(244, 255, 244));
+          color: black;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+          position: relative;
+        }
+
+        .cta-button::after {
+          content: '';
+          display: block;
+          width: 100%;
+          height: 2px;
+          background: #ffffff;
+          border-bottom: 2px dottedrgb(52, 50, 50);
+          position: absolute;
+          bottom: -5px;
+          left: 0;
+        }
+
+        .cta-button:hover {
+          background: radial-gradient(circle,rgb(45, 31, 31),rgb(4, 97, 10),rgb(76, 101, 76));
+          color: white;
+        }
+
+               // sidebar menu
                .header {
           display: flex;
           justify-content: space-between;
@@ -377,6 +411,57 @@ export default function JustStart() {
           color: #0070f3;
         }
 
+            .signup-form {
+          max-width: 400px;
+          margin: auto;
+          padding: 20px;
+          background: #f9f9f9;
+          border-radius: 8px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+          margin-bottom: 20px;
+        }
+
+        .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: bold;
+          color: #333;
+        }
+
+        .form-group input {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 1rem;
+        }
+
+        .form-group input:focus {
+          outline: none;
+          border-color: #0070f3;
+          box-shadow: 0 0 4px rgba(0, 112, 243, 0.5);
+        }
+
+        .cta-button {
+          display: inline-block;
+          width: 100%;
+          padding: 10px 20px;
+          background: #0070f3;
+          color: #ffffff;
+          text-decoration: none;
+          border-radius: 4px;
+          font-weight: bold;
+          text-align: center;
+          cursor: pointer;
+          transition: background 0.3s ease;
+        }
+
+        .cta-button:hover {
+          background: #005bb5;
+        }
       `}</style>
     </div>
   );

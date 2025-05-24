@@ -1,10 +1,46 @@
 "use client";
 
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+  
   return (
-    <div className="page">
+     <div className="page">
+      {/* Navbar */}
+      <header className="header">
+        <div className="logo">OFROOT x JUST START</div>
+        <button className="hamburger" onClick={toggleMenu} aria-label="Toggle Menu">
+          ☰
+        </button>
+        <nav className={`menu ${menuOpen ? "open" : ""}`}>
+          <ul>     
+            <li>
+                <Link href="/justStart">JUST START</Link>
+              </li>     
+                <hr></hr>
+            <li>
+              <a href="https://www.ofroot.health">OFROOT HEALTH</a>
+            </li>
+              <hr></hr>
+            {/* <li>
+              <Link href="/features">Features</Link>
+            </li>
+            <li>
+              <Link href="/about">About</Link>
+            </li>
+            <li>
+              <Link href="/contact">Contact</Link>
+            </li> */}
+          </ul>
+        </nav>
+      </header>
+
       <section className="jumbotron">
         <h1 className="jumbotronTitle">OFROOT Technology</h1>
         <p className="jumbotronSubtitle">Empowering Business Through Technology</p>
@@ -56,11 +92,12 @@ export default function Home() {
           <div className="footer-links">
             <a href="/" className="footer-logo">OFROOT</a>
             <ul className="footer-menu">
-              <li><a href="#home">Home</a></li>
+              {/* <li><a href="#home">Home</a></li>
               <li><a href="#features">Features</a></li>
               <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-              <li><a href="#privacy">Just Start</a></li>
+              <li><a href="#contact">Contact</a></li> */}
+              <Link href="/justStart">Just Start</Link>
+              {/* <li><a href="#privacy">Just Start</a></li> */}
             </ul>
           </div>
           <div className="footer-social">
@@ -297,6 +334,66 @@ export default function Home() {
         .cta-button:hover {
           background: radial-gradient(circle,rgb(45, 31, 31),rgb(4, 97, 10),rgb(76, 101, 76));
           color: white;
+        }
+
+               // sidebar menu
+               .header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 20px;
+          background: #ffffff;
+          border-bottom: 1px solid #ddd;
+        }
+
+        .logo {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: #000000;
+        }
+
+        .hamburger {
+          font-size: 1.5rem;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
+
+        .menu {
+          display: none;
+          flex-direction: column;
+          position: absolute;
+          top: 60px;
+          right: 20px;
+          background: #ffffff;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          padding: 10px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu.open {
+          display: flex;
+        }
+
+        .menu ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+        }
+
+        .menu li {
+          margin: 10px 0;
+        }
+
+        .menu a {
+          text-decoration: none;
+          color: #000000;
+          font-size: 1rem;
+        }
+
+        .menu a:hover {
+          color: #0070f3;
         }
       `}</style>
     </div>
