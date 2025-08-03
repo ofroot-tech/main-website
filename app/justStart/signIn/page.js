@@ -1,10 +1,13 @@
 "use client";
 
-import { useState } from 'react';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -19,6 +22,14 @@ export default function Home() {
   const [error, setError] = useState(""); // Error state
   const [success, setSuccess] = useState(""); // Success state
 
+  useEffect(() => {
+    // Check if user is already authenticated
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      router.push("/justStart/admin"); // Redirect to admin page if authenticated
+    }
+  }, [router]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -31,25 +42,22 @@ export default function Home() {
     setSuccess("");
 
     try {
-      const response = await fetch("https://your-laravel-backend.com/api/sign-in", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+      const response = await axios.post('http://localhost:8000/api/login', {
+        email: formData.email,
+        password: formData.password,
       });
 
-      if (response.ok) {
-        const data = await response.json();
+      if (response.status === 200) {
+        const data = response.data;
         setSuccess("Login successful!");
         localStorage.setItem("authToken", data.token); // Save the token in localStorage
         console.log("User Data:", data.user); // Log user data for debugging
+        router.push("/justStart/admin"); // Redirect to admin page
       } else {
-        const errorData = await response.json();
-        setError(errorData.message || "Failed to log in.");
+        setError("Failed to log in.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      setError("Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }

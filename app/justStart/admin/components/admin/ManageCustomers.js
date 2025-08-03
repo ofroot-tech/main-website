@@ -1,8 +1,81 @@
 "use client";
 
 import { useState } from "react";
+import axios from "axios";
 
-export default function ManageUsersPage() {
+function AddCustomerForm() {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/customers",
+        formData
+      );
+      alert("Customer added successfully!");
+    } catch (error) {
+      console.error("Error adding customer:", error);
+      alert("Failed to add customer.");
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <label>Name:</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
+      <div>
+        <label>Phone:</label>
+        <input
+          type="text"
+          name="phone"
+          value={formData.phone}
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <label>Address:</label>
+        <input
+          type="text"
+          name="address"
+          value={formData.address}
+          onChange={handleChange}
+        />
+      </div>
+      <button type="submit">Add Customer</button>
+    </form>
+  );
+}
+
+export default function ManageCustomers() {
   const [users, setUsers] = useState([
     { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
     { id: 2, name: "Jane Smith", email: "jane@example.com", role: "User" },
@@ -26,6 +99,7 @@ export default function ManageUsersPage() {
       </header>
 
       <main className="main">
+        <AddCustomerForm />
         <table className="users-table">
           <thead>
             <tr>
