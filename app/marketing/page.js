@@ -92,7 +92,8 @@ export default function JustStart() {
     if (window.Calendly) {
       // @ts-ignore
       window.Calendly.initPopupWidget({
-        url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting",
+        url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting", // test
+        // url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting",
       });
     } else {
       // fallback: scroll to inline widget
@@ -121,24 +122,30 @@ export default function JustStart() {
         </nav>
       </header>
 
-      {/* Hero */}
-      <section className="jumbotron">
+    <section className="jumbotron">
         <h1 className="jumbotronTitle">We bring you 10+ new jobs/month — or you don’t pay.</h1>
         <p className="jumbotronSubtitle">
-          Plumbers & home services{hasCity ? <> in <strong>{cleanCity}</strong></> : ""} — we make your phone ring with real customers.
+            Plumbers & home services{hasCity ? <> in <strong>{cleanCity}</strong></> : ""} — we make your phone ring with real customers.
         </p>
         <div className="ctaRow">
-          <button className="cta-button" onClick={openCalendly}>Book a Free Call</button>
-          <a className="cta-secondary" href="tel:+1-614-500-2315">Or call (614) 500‑2315</a>
+            <button
+                className="cta-button"
+                onClick={() => {
+                    document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
+                }}
+            >
+                Book a Free Call
+            </button>
+            <a className="cta-secondary" href="tel:+1-614-500-2315">Or call (614) 500‑2315</a>
         </div>
         <ul className="trust">
-          <li>✔ No win, no fee</li>
-          <li>✔ 10‑minute discovery</li>
-          <li>✔ Cancel anytime</li>
+            <li>✔ No win, no fee</li>
+            <li>✔ 10‑minute discovery</li>
+            <li>✔ Cancel anytime</li>
         </ul>
-      </section>
+    </section>
 
-      <main className="main">
+    <main className="main">
         {/* How it works */}
         <section id="how" className="section">
           <h2>How it works</h2>
@@ -189,13 +196,25 @@ export default function JustStart() {
         .menu ul { margin:0; padding:0; list-style:none; }
         .menu li { margin:8px 0; }
         .menu a { text-decoration:none; color:#000; }
-        .jumbotron { text-align:center; padding:80px 20px 40px; border-bottom:1px solid #222; }
+        .jumbotron { text-align:center; padding:120px 20px 80px; min-height:70vh; display:flex; flex-direction:column; justify-content:center; color:#fff; border-bottom:none; background: linear-gradient(135deg, #00FFA6 0%, #00D084 25%, #00B87A 50%, #00A86B 75%, #00E4B1 100%); background-size: 420% 420%; animation: jadeShift 6s linear infinite; position: relative; overflow: hidden; }
+        .jumbotron > * { position: relative; z-index: 1; }
+        .jumbotron::before { content: ""; position: absolute; inset: -20%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%); transform: translateX(-60%); animation: jadeShine 4s ease-in-out infinite; pointer-events: none; }
+        .jumbotron::after { content: ""; position: absolute; inset: -10%; background:
+          radial-gradient(60% 60% at 20% 30%, rgba(238, 229, 229, 0.18) 0%, rgba(159, 193, 10, 0) 60%),
+          radial-gradient(50% 50% at 80% 70%, rgba(0, 255, 200, 0.92) 0%, rgba(10, 32, 27, 0) 55%);
+          mix-blend-mode: screen; filter: saturate(300%);
+          animation: jadePulse 7s ease-in-out infinite;
+          pointer-events: none;
+        }
         .jumbotronTitle { font-size:2.8rem; margin:0; }
-        .jumbotronSubtitle { margin-top:12px; color:#555; }
+        .jumbotronSubtitle { margin-top:12px; color:#fff; }
         .ctaRow { margin-top:20px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
-        .cta-button { padding:12px 18px; background:#0070f3; color:#fff; border-radius:6px; font-weight:700; border:none; cursor:pointer; }
+        .cta-button { padding:12px 18px; background:#0b5fff; color:#fff; border-radius:6px; font-weight:700; border:none; cursor:pointer; }
         .cta-secondary { display:inline-flex; align-items:center; padding:12px 16px; border:1px solid #ddd; border-radius:6px; text-decoration:none; color:#000; }
+        .jumbotron .cta-secondary { border-color: rgba(255,255,255,0.6); color:#fff; }
+        .jumbotron .cta-secondary:hover { border-color: #fff; }
         .trust { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:16px 0 0; padding:0; list-style:none; color:#555; }
+        .jumbotron .trust { color: rgba(255,255,255,0.92); }
         .main { max-width:900px; margin:0 auto; padding:40px 20px 80px; }
         .section { padding:32px 0; border-bottom:1px solid #222; }
         h2 { margin:0 0 12px; font-size:1.6rem; }
@@ -207,7 +226,11 @@ export default function JustStart() {
         .footer { text-align:center; padding:28px 20px; border-top:1px solid #ddd; background:radial-gradient(circle,#fff,#f6fff7); }
         .footer-logo { text-decoration:none; font-weight:700; color:#000; }
         .footer-copy { color:#666; margin-top:8px; font-size:.95rem; }
-        @media (max-width:768px){ .jumbotronTitle{font-size:2.2rem;} }
+        @keyframes jadeShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes jadeShine { 0% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } 50% { transform: translateX(60%) rotate(0.001deg); opacity: .55; } 100% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } }
+        @keyframes jadePulse { 0% { transform: translate(-5%, -5%) scale(1); opacity: .25; } 50% { transform: translate(5%, 5%) scale(1.08); opacity: .5; } 100% { transform: translate(-5%, -5%) scale(1); opacity: .25; } }
+        @media (prefers-reduced-motion: reduce) { .jumbotron { animation: none; } .jumbotron::before, .jumbotron::after { animation: none; opacity: 0; } }
+        @media (max-width:768px){ .jumbotronTitle{font-size:2.2rem;} .jumbotron{ min-height:60vh; padding:100px 16px 60px; } }
       `}</style>
     </div>
   );
