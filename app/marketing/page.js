@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export default function JustStart() {
   const [menuOpen, setMenuOpen] = useState(false);
   const toggleMenu = () => setMenuOpen((s) => !s);
-``
+
   // City detection state
   const [city, setCity] = useState(null);
 
@@ -92,7 +92,7 @@ export default function JustStart() {
     if (window.Calendly) {
       // @ts-ignore
       window.Calendly.initPopupWidget({
-        url: "https://calendly.com/YOUR-CALENDLY/10min?hide_event_type_details=1&hide_gdpr_banner=1",
+        url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting",
       });
     } else {
       // fallback: scroll to inline widget
@@ -165,7 +165,7 @@ export default function JustStart() {
           <h2>Book your free 10‑minute call</h2>
           <div
             className="calendly-inline-widget"
-            data-url="https://calendly.com/YOUR-CALENDLY/10min?hide_event_type_details=1&hide_gdpr_banner=1"
+            data-url="https://calendly.com/dimitri-mcdaniel-9oh/new-meeting"
             style={{ minWidth: 320, height: 620 }}
           />
         </section>
