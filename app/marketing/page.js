@@ -122,37 +122,39 @@ export default function JustStart() {
         </nav>
       </header>
 
-    <section className="jumbotron">
+      {/* Hero */}
+      <section className="jumbotron">
         <h1 className="jumbotronTitle">We bring you 10+ new jobs/month — or you don’t pay.</h1>
         <p className="jumbotronSubtitle">
-            Plumbers & home services{hasCity ? <> in <strong>{cleanCity}</strong></> : ""} — we make your phone ring with real customers.
+          Plumbers & home services{hasCity ? <> in <strong>{cleanCity}</strong></> : ""} — we make your phone ring with real customers.
         </p>
+        <p className="microNote">Based on tracked, local leads that convert to jobs for home services (e.g., plumbing, HVAC).</p>
         <div className="ctaRow">
-            <button
-                className="cta-button"
-                onClick={() => {
-                    document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
-                }}
-            >
-                Book a Free Call
-            </button>
-            <a className="cta-secondary" href="tel:+1-614-500-2315">Or call (614) 500‑2315</a>
+          <button
+            className="cta-button"
+            onClick={() => {
+              document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            Book a Free Call
+          </button>
+          <a className="cta-secondary" href="tel:+1-614-500-2315">Or call (614) 500‑2315</a>
         </div>
         <ul className="trust">
-            <li>✔ No win, no fee</li>
-            <li>✔ 10‑minute discovery</li>
-            <li>✔ Cancel anytime</li>
+          <li>✔ No win, no fee</li>
+          <li>✔ 10‑minute discovery</li>
+          <li>✔ Cancel anytime</li>
         </ul>
-    </section>
+      </section>
 
-    <main className="main">
+      <main className="main">
         {/* How it works */}
         <section id="how" className="section">
           <h2>How it works</h2>
           <ol className="steps">
-            <li><strong>Launch:</strong> We target high‑intent Google searches (e.g., “emergency plumber”).</li>
-            <li><strong>Convert:</strong> Traffic hits a fast page with click‑to‑call + quote form.</li>
-            <li><strong>Track:</strong> Calls & leads tracked; if you don’t get jobs, you don’t pay.</li>
+            <li>1️⃣ <strong>Launch</strong> → Target high‑intent searches (e.g., “emergency plumber near me”).</li>
+            <li>2️⃣ <strong>Convert</strong> → Fast landing pages with click‑to‑call + quote form.</li>
+            <li>3️⃣ <strong>Track</strong> → Every call & lead tracked. <em>No jobs = no fee.</em></li>
           </ol>
         </section>
 
@@ -160,21 +162,37 @@ export default function JustStart() {
         <section id="proof" className="section">
           <h2>Why choose us</h2>
           <ul className="grid bullets">
-            <li>Risk‑free guarantee: <strong>No jobs, no fee</strong>.</li>
-            <li>Real local leads: calls + form submissions.</li>
-            <li>Fast setup: live in 48 hours.</li>
-            <li>Transparent reporting & call recordings.</li>
+            <li><strong>Risk‑free:</strong> Pay only for real jobs.</li>
+            <li><strong>Qualified local leads:</strong> Calls + form submissions that convert.</li>
+            <li><strong>Fast launch:</strong> Live within 48 hours — done for you.</li>
+            <li><strong>Transparent reporting:</strong> Call recordings + performance reports.</li>
           </ul>
+        </section>
+
+        {/* Testimonial */}
+        <section className="section testimonial">
+          <blockquote>“Booked 18 new plumbing jobs in month one.” — MARS</blockquote>
         </section>
 
         {/* Booking (inline Calendly) */}
         <section id="book" className="section">
           <h2>Book your free 10‑minute call</h2>
+          <p className="subtle">Slots fill fast — secure your setup in 2 business days.</p>
+          <div className="ctaRow" style={{ marginTop: 12 }}>
+            <button className="cta-button" onClick={openCalendly}>Book Your Free Call</button>
+            <a className="cta-secondary" href="#sample-report">View Sample Report</a>
+          </div>
           <div
             className="calendly-inline-widget"
             data-url="https://calendly.com/dimitri-mcdaniel-9oh/new-meeting"
-            style={{ minWidth: 320, height: 620 }}
+            style={{ minWidth: 320, height: 620, marginTop: 16 }}
           />
+        </section>
+
+        {/* Sample report (light placeholder) */}
+        <section id="sample-report" className="section">
+          <h2>Sample performance report</h2>
+          <div className="sampleReport">Preview the metrics we share: calls, lead quality, conversion rate, and ROI. (Sample available on request.)</div>
         </section>
       </main>
 
@@ -200,9 +218,9 @@ export default function JustStart() {
         .jumbotron > * { position: relative; z-index: 1; }
         .jumbotron::before { content: ""; position: absolute; inset: -20%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%); transform: translateX(-60%); animation: jadeShine 4s ease-in-out infinite; pointer-events: none; }
         .jumbotron::after { content: ""; position: absolute; inset: -10%; background:
-          radial-gradient(60% 60% at 20% 30%, rgba(238, 229, 229, 0.18) 0%, rgba(159, 193, 10, 0) 60%),
-          radial-gradient(50% 50% at 80% 70%, rgba(0, 255, 200, 0.92) 0%, rgba(10, 32, 27, 0) 55%);
-          mix-blend-mode: screen; filter: saturate(300%);
+          radial-gradient(60% 60% at 20% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%),
+          radial-gradient(50% 50% at 80% 70%, rgba(0,255,200,0.18) 0%, rgba(0,255,200,0) 55%);
+          mix-blend-mode: screen; filter: saturate(140%);
           animation: jadePulse 7s ease-in-out infinite;
           pointer-events: none;
         }
@@ -223,14 +241,31 @@ export default function JustStart() {
         .grid.bullets { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; padding:0; list-style:none; }
         .grid.bullets li { background:#f9f9f9; border:1px solid #ddd; border-radius:8px; padding:14px; }
         .calendly-inline-widget { width:100%; border:1px solid #eee; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,.05); }
-        .footer { text-align:center; padding:28px 20px; border-top:1px solid #ddd; background:radial-gradient(circle,#fff,#f6fff7); }
-        .footer-logo { text-decoration:none; font-weight:700; color:#000; }
-        .footer-copy { color:#666; margin-top:8px; font-size:.95rem; }
+        .footer { text-align:center; padding:28px 20px; border-top:1px solid rgba(255,255,255,0.3); position:relative; overflow:hidden; color:#fff; background: linear-gradient(135deg, #00FFA6 0%, #00D084 25%, #00B87A 50%, #00A86B 75%, #00E4B1 100%); background-size: 420% 420%; animation: jadeShift 6s linear infinite; }
+        .footer::before { content: ""; position: absolute; inset: -20%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: translateX(-60%); animation: jadeShine 5s ease-in-out infinite; pointer-events: none; }
+        .footer::after { content: ""; position: absolute; inset: -10%; background:
+          radial-gradient(60% 60% at 20% 30%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 60%),
+          radial-gradient(50% 50% at 80% 70%, rgba(0,255,200,0.14) 0%, rgba(0,255,200,0) 55%);
+          mix-blend-mode: screen; filter: saturate(140%);
+          animation: jadePulse 7s ease-in-out infinite;
+          pointer-events: none;
+        }
+        .footer-logo { text-decoration:none; font-weight:700; color:#fff; }
+        .footer-copy { color:#fff; margin-top:8px; font-size:.95rem; opacity:.9; }
         @keyframes jadeShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         @keyframes jadeShine { 0% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } 50% { transform: translateX(60%) rotate(0.001deg); opacity: .55; } 100% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } }
         @keyframes jadePulse { 0% { transform: translate(-5%, -5%) scale(1); opacity: .25; } 50% { transform: translate(5%, 5%) scale(1.08); opacity: .5; } 100% { transform: translate(-5%, -5%) scale(1); opacity: .25; } }
-        @media (prefers-reduced-motion: reduce) { .jumbotron { animation: none; } .jumbotron::before, .jumbotron::after { animation: none; opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .jumbotron, .footer { animation: none; } .jumbotron::before, .jumbotron::after, .footer::before, .footer::after { animation: none; opacity: 0; } }
         @media (max-width:768px){ .jumbotronTitle{font-size:2.2rem;} .jumbotron{ min-height:60vh; padding:100px 16px 60px; } }
+      `}</style>
+
+      {/* Add-on styles for new elements */}
+      <style jsx>{`
+        .microNote { margin-top:8px; font-size:0.95rem; opacity:0.9; }
+        .section.testimonial { background:#f7fdf8; border:1px solid #d5f3e6; border-radius:10px; padding:16px; }
+        .section.testimonial blockquote { margin:0; font-style:italic; color:#0a3d2c; }
+        .subtle { margin-top:6px; color:#666; }
+        .sampleReport { margin-top:8px; background:#fafafa; border:1px solid #eee; border-radius:10px; padding:16px; color:#555; text-align:center; }
       `}</style>
     </div>
   );
