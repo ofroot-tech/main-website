@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function JustStart() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -8,6 +8,10 @@ export default function JustStart() {
 
   // City detection state
   const [city, setCity] = useState(null);
+
+  // VANTA: refs/state
+  const jumbotronBgRef = useRef(null);
+  const vantaInstance = useRef(null);
 
   // Load Calendly widget script once
   useEffect(() => {
@@ -24,33 +28,21 @@ export default function JustStart() {
   useEffect(() => {
     let cancelled = false;
     const abort = new AbortController();
-
     const setSafeCity = (name) => {
-      if (!cancelled && name && typeof name === "string") {
-        setCity(name);
-      }
+      if (!cancelled && name && typeof name === "string") setCity(name);
     };
 
     const ipCityFallback = async () => {
       try {
-        // Try ipwho.is (no key, CORS-enabled)
         const r = await fetch("https://ipwho.is/?fields=city,region,country,success", { signal: abort.signal });
         const j = await r.json();
-        if (j && j.success) {
-          setSafeCity(j.city || j.region || null);
-          return;
-        }
-      } catch (_) {}
+        if (j && j.success) { setSafeCity(j.city || j.region || null); return; }
+      } catch {}
       try {
-        // Secondary fallback: ipapi.co
         const r2 = await fetch("https://ipapi.co/json/", { signal: abort.signal });
         const j2 = await r2.json();
-        if (j2 && (j2.city || j2.region)) {
-          setSafeCity(j2.city || j2.region);
-        }
-      } catch (_) {
-        // swallow; will default to placeholder
-      }
+        if (j2 && (j2.city || j2.region)) setSafeCity(j2.city || j2.region);
+      } catch {}
     };
 
     const reverseGeocode = async (lat, lon) => {
@@ -59,31 +51,90 @@ export default function JustStart() {
         const r = await fetch(url, { signal: abort.signal });
         const j = await r.json();
         const name = j.city || j.locality || j.localityName || j.principalSubdivision || null;
-        if (name) {
-          setSafeCity(name);
-        } else {
-          await ipCityFallback();
-        }
-      } catch (_) {
-        await ipCityFallback();
-      }
+        if (name) setSafeCity(name); else await ipCityFallback();
+      } catch { await ipCityFallback(); }
     };
 
     if (typeof window !== "undefined" && "geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => reverseGeocode(pos.coords.latitude, pos.coords.longitude),
-        () => {
-          ipCityFallback();
-        },
+        () => { ipCityFallback(); },
         { enableHighAccuracy: false, timeout: 7000, maximumAge: 60 * 60 * 1000 }
       );
-    } else {
-      ipCityFallback();
+    } else { ipCityFallback(); }
+
+    return () => { cancelled = true; abort.abort(); };
+  }, []);
+
+  // --- VANTA WAVES via CDN init/cleanup (uses three.r121 + vanta.waves from CDN)
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadScript = (src) =>
+      new Promise((resolve, reject) => {
+        if (document.querySelector(`script[src="${src}"]`)) return resolve();
+        const s = document.createElement("script");
+        s.src = src;
+        s.async = true;
+        s.onload = () => resolve();
+        s.onerror = (e) => reject(e);
+        document.head.appendChild(s);
+      });
+
+    async function start() {
+      if (!jumbotronBgRef.current) return;
+
+      // Respect prefers-reduced-motion
+      const reduce = typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) return;
+
+      try {
+        // Load specific versions (three.r121 is known to work with many Vanta builds)
+        await loadScript("https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js");
+        await loadScript("https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js");
+
+        if (cancelled || !jumbotronBgRef.current) return;
+
+        if (window.VANTA && typeof window.VANTA.WAVES === "function") {
+          // initialize on the host element
+          vantaInstance.current = window.VANTA.WAVES({
+            el: jumbotronBgRef.current,
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.0,
+            minWidth: 200.0,
+            scale: 1.0,
+            scaleMobile: 1.0,
+
+            // tuned options (black + jade + white palette)
+            backgroundColor: 0x000000, // solid black background
+            color: 0x00A86B,           // jade wave color (darker jade)
+            shininess: 0.8,            // VERY low shininess for subtle highlights
+            waveHeight: 10.0,          // slightly reduced wave height
+            waveSpeed: 0.65,           // gentler motion
+            zoom: 1.02,                // slight zoom for depth
+          });
+        } else {
+          console.warn("VANTA.WAVES not available on window.VANTA", window.VANTA);
+        }
+      } catch (err) {
+        console.warn("Failed to load or init Vanta WAVES via CDN:", err);
+      }
     }
+
+    start();
 
     return () => {
       cancelled = true;
-      abort.abort();
+      try {
+        if (vantaInstance.current && typeof vantaInstance.current.destroy === "function") {
+          vantaInstance.current.destroy();
+          vantaInstance.current = null;
+        }
+      } catch (e) {
+        // ignore
+      }
     };
   }, []);
 
@@ -91,17 +142,12 @@ export default function JustStart() {
     // @ts-ignore
     if (window.Calendly) {
       // @ts-ignore
-      window.Calendly.initPopupWidget({
-        url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting", // test
-        // url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting",
-      });
+      window.Calendly.initPopupWidget({ url: "https://calendly.com/dimitri-mcdaniel-9oh/new-meeting" });
     } else {
-      // fallback: scroll to inline widget
       document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
     }
   };
 
-  // Prepare city display only if detected
   const hasCity = !!(city && city.trim());
   const cleanCity = hasCity ? city.trim() : "";
 
@@ -110,9 +156,7 @@ export default function JustStart() {
       {/* Header */}
       <header className="header">
         <div className="logo">OFROOT × Marketing</div>
-        <button className="hamburger" onClick={toggleMenu} aria-label="Toggle Menu">
-          ☰
-        </button>
+        <button className="hamburger" onClick={toggleMenu} aria-label="Toggle Menu">☰</button>
         <nav className={`menu ${menuOpen ? "open" : ""}`} aria-label="Main">
           <ul>
             <li><a href="#how">How it works</a></li>
@@ -125,32 +169,24 @@ export default function JustStart() {
 
       {/* Hero */}
       <section className="jumbotron">
-        {/* UPDATED PROMISE */}
+        {/* VANTA background layer */}
+        <div className="jumbotronBg" ref={jumbotronBgRef} aria-hidden="true" />
+
+        {/* Foreground content */}
         <h1 className="jumbotronTitle">More calls. More jobs. More revenue — or you don’t pay.</h1>
 
         <p className="jumbotronSubtitle">
           Plumbers & home services{hasCity ? <> in <strong>{cleanCity}</strong></> : ""} — we make your phone ring with real customers.
         </p>
 
-        {/* SHORT DISCLAIMER (REPLACED PRIOR MICRO NOTE CONTENT) */}
-        <p className="microNote">
-          *Guarantee applies to qualified, tracked local leads within the first 30 days.
-        </p>
+        <p className="microNote">*Guarantee applies to qualified, tracked local leads within the first 30 days.</p>
 
         <div className="ctaRow">
-          <button
-            className="cta-button"
-            onClick={() => {
-              document.getElementById("book")?.scrollIntoView({ behavior: "smooth" });
-            }}
-          >
-            Book a Free Call
-          </button>
+          <button className="cta-button" onClick={() => { document.getElementById("book")?.scrollIntoView({ behavior: "smooth" }); }}>Book a Free Call</button>
           <a className="cta-secondary" href="tel:+1-614-500-2315">Or call (614) 500-2315</a>
         </div>
 
         <ul className="trust">
-          {/* UPDATED TO MATCH PROMISE */}
           <li>✔ No results, no charge</li>
           <li>✔ 10-minute discovery</li>
           <li>✔ Cancel anytime</li>
@@ -164,30 +200,20 @@ export default function JustStart() {
           <ol className="steps">
             <li>1️⃣ <strong>Launch</strong> → Target high-intent searches (e.g., “emergency plumber near me”).</li>
             <li>2️⃣ <strong>Convert</strong> → Fast landing pages with click-to-call + quote form.</li>
-            {/* UPDATED LEGAL/PROMISE LANGUAGE */}
             <li>3️⃣ <strong>Track</strong> → Every call & lead tracked. <em>No results = no charge.</em></li>
           </ol>
         </section>
 
         {/* Proof/Why Us */}
-      <section id="proof" className="section">
-  <h2>Why choose us</h2>
-  <ul className="grid bullets">
-    <li>
-      <strong>Low-risk partnership:</strong> Clear performance benchmarks and flexible month-to-month terms.
-    </li>
-    <li>
-      <strong>Verified local leads:</strong> Phone calls and form submissions from customers in your service area.
-    </li>
-    <li>
-      <strong>Rapid launch:</strong> Campaigns and landing pages live within 2 business days after onboarding.
-    </li>
-    <li>
-      <strong>Transparent results:</strong> Easy-to-read reports with call recordings, lead quality, and ROI tracking.
-    </li>
-  </ul>
-</section>
-
+        <section id="proof" className="section">
+          <h2>Why choose us</h2>
+          <ul className="grid bullets">
+            <li><strong>Low-risk partnership:</strong> Clear performance benchmarks and flexible month-to-month terms.</li>
+            <li><strong>Verified local leads:</strong> Phone calls and form submissions from customers in your service area.</li>
+            <li><strong>Rapid launch:</strong> Campaigns and landing pages live within 2 business days after onboarding.</li>
+            <li><strong>Transparent results:</strong> Easy-to-read reports with call recordings, lead quality, and ROI tracking.</li>
+          </ul>
+        </section>
 
         {/* Testimonial */}
         <section className="section testimonial">
@@ -202,19 +228,13 @@ export default function JustStart() {
             <button className="cta-button" onClick={openCalendly}>Book Your Free Call</button>
             <a className="cta-secondary" href="#sample-report">View Sample Report</a>
           </div>
-          <div
-            className="calendly-inline-widget"
-            data-url="https://calendly.com/dimitri-mcdaniel-9oh/new-meeting"
-            style={{ minWidth: 320, height: 620, marginTop: 16 }}
-          />
+          <div className="calendly-inline-widget" data-url="https://calendly.com/dimitri-mcdaniel-9oh/new-meeting" style={{ minWidth: 320, height: 620, marginTop: 16 }} />
         </section>
 
         {/* Sample report (light placeholder) */}
         <section id="sample-report" className="section">
           <h2>Sample performance report</h2>
-          <div className="sampleReport">
-            Preview the metrics we share: calls, lead quality, conversion rate, and ROI. (Sample available on request.)
-          </div>
+          <div className="sampleReport">Preview the metrics we share: calls, lead quality, conversion rate, and ROI. (Sample available on request.)</div>
         </section>
       </main>
 
@@ -222,42 +242,68 @@ export default function JustStart() {
       <footer className="footer">
         <a href="#book" className="footer-logo">OFROOT × Marketing</a>
         <p className="footer-copy">© {new Date().getFullYear()} OFROOT Technology. All rights reserved.</p>
-
-        {/* LONGER DISCLAIMER (LEGAL) — already present, kept but tightened punctuation slightly */}
-        <p className="mt-4 max-w-4xl text-sm/6 text-white/95">
-          Results guarantee applies to verified local leads that meet agreed quality criteria (e.g., within service area,
-          reachable, and service-relevant) during the first 30 days and after onboarding/ad setup is completed. Spam,
-          duplicates, and out-of-scope inquiries are excluded.
-        </p>
+        <p className="mt-4 max-w-4xl text-sm/6 text-white/95">Results guarantee applies to verified local leads that meet agreed quality criteria (e.g., within service area, reachable, and service-relevant) during the first 30 days and after onboarding/ad setup is completed. Spam, duplicates, and out-of-scope inquiries are excluded.</p>
       </footer>
 
-      {/* Styles (consolidated from public/marketing.css) */}
+      {/* Styles */}
       <style jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 
         .page { font-family: 'JetBrains Mono', monospace; color: #000; background: #fff; }
-        .header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #ddd; position:sticky; top:0; background:#fff; z-index:10; }
+        .header { display:flex; justify-content:space-between; align-items:center; padding:16px 20px; border-bottom:1px solid #ddd; position:sticky; top:0; background:#fff; z-index:20; }
         .logo { font-weight:700; }
         .hamburger { font-size:1.5rem; background:none; border:none; cursor:pointer; }
-        .menu { display:none; position:absolute; right:20px; top:56px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:10px; }
+        .menu { display:none; position:absolute; right:20px; top:56px; background:#fff; border:1px solid #ddd; border-radius:8px; padding:10px; z-index:30; }
         .menu.open { display:block; }
         .menu ul { margin:0; padding:0; list-style:none; }
         .menu li { margin:8px 0; }
         .menu a { text-decoration:none; color:#000; }
 
-        .jumbotron { text-align:center; padding:120px 20px 80px; min-height:70vh; display:flex; flex-direction:column; justify-content:center; color:#fff; border-bottom:none; background: linear-gradient(135deg, #00FFA6 0%, #00D084 25%, #00B87A 50%, #00A86B 75%, #00E4B1 100%); background-size: 420% 420%; animation: jadeShift 6s linear infinite; position: relative; overflow: hidden; }
-        .jumbotron > * { position: relative; z-index: 1; }
-        .jumbotron::before { content: ""; position: absolute; inset: -20%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.22) 50%, rgba(255,255,255,0) 100%); transform: translateX(-60%); animation: jadeShine 4s ease-in-out infinite; pointer-events: none; }
-        .jumbotron::after { content: ""; position: absolute; inset: -10%; background: radial-gradient(60% 60% at 20% 30%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%), radial-gradient(50% 50% at 80% 70%, rgba(0,255,200,0.18) 0%, rgba(0,255,200,0) 55%); mix-blend-mode: screen; filter: saturate(140%); animation: jadePulse 7s ease-in-out infinite; pointer-events: none; }
+        /* Hero with VANTA underlay */
+        .jumbotron {
+          position: relative;
+          text-align:center;
+          padding:120px 20px 80px;
+          min-height:70vh;
+          display:flex;
+          flex-direction:column;
+          justify-content:center;
+          color:#fff;
+          border-bottom:none;
+          /* black fallback so Vanta waves read as black/jade/white */
+          background: #000;
+          background-size: cover;
+          animation: none;
+          overflow: hidden;
+          isolation: isolate; /* ensures z-index layering is contained */
+        }
+
+        /* VANTA host layer sits behind content */
+        .jumbotronBg { position: absolute; inset: 0; z-index: 0; }
+
+        /* Subtle overlay for contrast on top of VANTA */
+        .jumbotron::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+          /* layered overlay: darken toward bottom + retain subtle radial highlights */
+          background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.46) 100%),
+                      radial-gradient(60% 60% at 20% 30%, rgba(0,0,0,0.12) 0%, rgba(0,0,0,0.0) 60%),
+                      radial-gradient(50% 50% at 80% 70%, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.0) 55%);
+          pointer-events: none;
+        }
+
+        /* Foreground content stays above VANTA & overlay */
+        .jumbotron > *:not(.jumbotronBg) { position: relative; z-index: 2; }
+
         .jumbotronTitle { font-size:2.8rem; margin:0; }
         .jumbotronSubtitle { margin-top:12px; color:#fff; }
         .ctaRow { margin-top:20px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
         .cta-button { padding:12px 18px; background:#0b5fff; color:#fff; border-radius:6px; font-weight:700; border:none; cursor:pointer; }
-        .cta-secondary { display:inline-flex; align-items:center; padding:12px 16px; border:1px solid #ddd; border-radius:6px; text-decoration:none; color:#000; }
-        .jumbotron .cta-secondary { border-color: rgba(255,255,255,0.6); color:#fff; }
-        .jumbotron .cta-secondary:hover { border-color: #fff; }
-        .trust { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:16px 0 0; padding:0; list-style:none; color:#555; }
-        .jumbotron .trust { color: rgba(255,255,255,0.92); }
+        .cta-secondary { display:inline-flex; align-items:center; padding:12px 16px; border:1px solid rgba(255,255,255,0.6); border-radius:6px; text-decoration:none; color:#fff; }
+        .cta-secondary:hover { border-color:#fff; }
+        .trust { display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin:16px 0 0; padding:0; list-style:none; color:rgba(255,255,255,0.92); }
 
         .main { max-width:900px; margin:0 auto; padding:40px 20px 80px; }
         .section { padding:32px 0; border-bottom:1px solid #222; }
@@ -266,19 +312,15 @@ export default function JustStart() {
         .steps li { margin:10px 0; }
         .grid.bullets { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; padding:0; list-style:none; }
         .grid.bullets li { background:#f9f9f9; border:1px solid #ddd; border-radius:8px; padding:14px; }
-        .calendly-inline-widget { width:100%; border:1px solid #eee; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,.05); }
+        .calendly-inline-widget { width:100%; border:1px solid #eee; border-radius:10px; box-shadow:0 8px 20px rgba(0,0,0,.05); background:#fff; }
 
         .footer { text-align:center; padding:28px 20px; border-top:1px solid rgba(255,255,255,0.3); position:relative; overflow:hidden; color:#fff; background: linear-gradient(135deg, #00FFA6 0%, #00D084 25%, #00B87A 50%, #00A86B 75%, #00E4B1 100%); background-size: 420% 420%; animation: jadeShift 6s linear infinite; }
-        .footer::before { content: ""; position: absolute; inset: -20%; background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: translateX(-60%); animation: jadeShine 5s ease-in-out infinite; pointer-events: none; }
-        .footer::after { content: ""; position: absolute; inset: -10%; background: radial-gradient(60% 60% at 20% 30%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 60%), radial-gradient(50% 50% at 80% 70%, rgba(0,255,200,0.14) 0%, rgba(0,255,200,0) 55%); mix-blend-mode: screen; filter: saturate(140%); animation: jadePulse 7s ease-in-out infinite; pointer-events: none; }
         .footer-logo { text-decoration:none; font-weight:700; color:#fff; }
         .footer-copy { color:#fff; margin-top:8px; font-size:.95rem; opacity:.9; }
 
         @keyframes jadeShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes jadeShine { 0% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } 50% { transform: translateX(60%) rotate(0.001deg); opacity: .55; } 100% { transform: translateX(-60%) rotate(0.001deg); opacity: .25; } }
-        @keyframes jadePulse { 0% { transform: translate(-5%, -5%) scale(1); opacity: .25; } 50% { transform: translate(5%, 5%) scale(1.08); opacity: .5; } 100% { transform: translate(-5%, -5%) scale(1); opacity: .25; } }
 
-        @media (prefers-reduced-motion: reduce) { .jumbotron, .footer { animation: none; } .jumbotron::before, .jumbotron::after, .footer::before, .footer::after { animation: none; opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .jumbotron, .footer { animation: none; } .jumbotron::after { background: none; } }
         @media (max-width:768px){ .jumbotronTitle{font-size:2.2rem;} .jumbotron{ min-height:60vh; padding:100px 16px 60px; } }
 
         /* add-on styles */
