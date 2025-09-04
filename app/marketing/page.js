@@ -225,7 +225,7 @@ export default function JustStart() {
           <h2>Book your free 10-minute call</h2>
           <p className="subtle">Slots fill fast — secure your setup in 2 business days.</p>
           <div className="ctaRow" style={{ marginTop: 12 }}>
-            <button className="cta-button" onClick={openCalendly}>Book Your Free Call</button>
+            {/* <button className="cta-button" onClick={openCalendly}>Book Your Free Call</button> */}
             <a className="cta-secondary" href="#sample-report">View Sample Report</a>
           </div>
           <div className="calendly-inline-widget" data-url="https://calendly.com/dimitri-mcdaniel-9oh/new-meeting" style={{ minWidth: 320, height: 620, marginTop: 16 }} />
