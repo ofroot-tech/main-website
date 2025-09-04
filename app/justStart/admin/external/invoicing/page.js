@@ -2,23 +2,23 @@
 
 import { useState } from "react";
 
-import AutoRemindersForm from "../../components/autoReminders/page";
-import CustomizableInvoiceTemplates from "../../components/CustomizableInvoiceTemplates/page";
-import ItemizedServices from "../../components/itemizedServices/page";
-import TaxesAndDiscounts from "../../components/taxesAndDiscounts/page";
-import CustomerInfoStorage from "../../components/customerInfoStorage/page";
-import InvoiceTracking from "../../components/invoiceTracking/page";
-import PaymentStatus from "../../components/paymentStatus/page";
-import MultiplePaymentMethods from "../../components/multiplePaymentMethods/page";
-import DepositRequests from "../../components/depositRequests/page";
-import RecurringInvoices from "../../components/recurringInvoices/page";
-import MobileOptimization from "../../components/mobileOptimization/page";
-import EstimatesToInvoices from "../../components/estimatesToInvoices/page";
-import TimeTrackingIntegration from "../../components/timeTrackingIntegration/page";
-import DigitalSignatures from "../../components/digitalSignatures/page";
-import ServiceHistoryLookup from "../../components/serviceHistoryLookup/page";
-import ExpenseTrackingIntegration from "../../components/expenseTrackingIntegration/page";
-import GratuityTipsOption from "../../components/gratuityTipsOption/page";
+import AutoRemindersForm from "../../components/autoReminders";
+import CustomizableInvoiceTemplates from "../../components/CustomizableInvoiceTemplates";
+import ItemizedServices from "../../components/itemizedServices";
+import TaxesAndDiscounts from "../../components/taxesAndDiscounts";
+import CustomerInfoStorage from "../../components/customerInfoStorage";
+import InvoiceTracking from "../../components/invoiceTracking";
+import PaymentStatus from "../../components/paymentStatus";
+import MultiplePaymentMethods from "../../components/multiplePaymentMethods";
+import DepositRequests from "../../components/depositRequests";
+import RecurringInvoices from "../../components/recurringInvoices";
+import MobileOptimization from "../../components/mobileOptimization";
+import EstimatesToInvoices from "../../components/estimatesToInvoices";
+import TimeTrackingIntegration from "../../components/timeTrackingIntegration";
+import DigitalSignatures from "../../components/digitalSignatures";
+import ServiceHistoryLookup from "../../components/serviceHistoryLookup";
+import ExpenseTrackingIntegration from "../../components/expenseTrackingIntegration";
+import GratuityTipsOption from "../../components/gratuityTipsOption";
 
 export default function InvoicingPage() {
     const [modalContent, setModalContent] = useState(null);
@@ -320,4 +320,3 @@ export default function InvoicingPage() {
       );
     }
 
-    
