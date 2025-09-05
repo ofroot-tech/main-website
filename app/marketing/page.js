@@ -9,6 +9,33 @@ export default function JustStart() {
   // City detection state
   const [city, setCity] = useState(null);
 
+  // Normalize place names from geocoding providers to a more human-friendly form
+  function normalizePlaceName(raw) {
+    if (!raw || typeof raw !== "string") return raw;
+    let s = raw.trim();
+
+    // Common re-orderings/cleanups from providers
+    // "Charter Township of Superior" -> "Superior Charter Township"
+    s = s.replace(/^Charter Township of\s+(.+)$/i, "$1 Charter Township");
+    // "Township of X" -> "X Township"
+    s = s.replace(/^Township of\s+(.+)$/i, "$1 Township");
+    // "City of X" -> "X"
+    s = s.replace(/^City of\s+(.+)$/i, "$1");
+    // "Municipality of X" -> "X"
+    s = s.replace(/^Municipality of\s+(.+)$/i, "$1");
+
+    // Remove duplicate whitespace
+    s = s.replace(/\s+/g, " ").trim();
+
+    // Simple title-case (keeps acronyms as-is if already uppercase)
+    s = s.split(" ").map((w) => {
+      if (w.toUpperCase() === w) return w; // ACRONYMS
+      return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+    }).join(" ");
+
+    return s;
+  }
+
   // VANTA: refs/state
   const jumbotronBgRef = useRef(null);
   const vantaInstance = useRef(null);
@@ -29,7 +56,7 @@ export default function JustStart() {
     let cancelled = false;
     const abort = new AbortController();
     const setSafeCity = (name) => {
-      if (!cancelled && name && typeof name === "string") setCity(name);
+      if (!cancelled && name && typeof name === "string") setCity(normalizePlaceName(name));
     };
 
     const ipCityFallback = async () => {
@@ -107,9 +134,10 @@ export default function JustStart() {
             scale: 1.0,
             scaleMobile: 1.0,
 
-            // tuned options (black + jade + white palette)
-            backgroundColor: 0x000000, // solid black background
-            color: 0x00A86B,           // jade wave color (darker jade)
+            // tuned options (charcoal + white palette)
+            backgroundColor: 0x141414, // charcoal background
+            color: 0x444444,           // primary wave color: charcoal gray
+            color2: 0xffffff,          // secondary/contrast color: white
             shininess: 0.8,            // VERY low shininess for subtle highlights
             waveHeight: 10.0,          // slightly reduced wave height
             waveSpeed: 0.65,           // gentler motion
@@ -271,7 +299,7 @@ export default function JustStart() {
           color:#fff;
           border-bottom:none;
           /* black fallback so Vanta waves read as black/jade/white */
-          background: #000;
+          background: #141414; /* charcoal black fallback */
           background-size: cover;
           animation: none;
           overflow: hidden;

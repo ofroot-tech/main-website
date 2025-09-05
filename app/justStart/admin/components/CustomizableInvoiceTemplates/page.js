@@ -132,3 +132,7 @@ export default function CustomizableInvoiceTemplates({ onClose }) {
     </form>
   );
 }
+
+export default function Page() {
+  return null;
+}
