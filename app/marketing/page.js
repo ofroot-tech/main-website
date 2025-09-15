@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"; // neccessary for the page state control
 
 export default function JustStart() {
   const [menuOpen, setMenuOpen] = useState(false);
